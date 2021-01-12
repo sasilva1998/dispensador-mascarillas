@@ -102,3 +102,16 @@ arreglocreadofloat (char *reci)
       i++;
     }
 }
+
+void
+encenderLedUV (bool status)
+{
+  if (status)
+    {
+      PORTD = (1 << PB0);
+    }
+  else
+    {
+      PORTD = (0 << PB0);
+    }
+}
