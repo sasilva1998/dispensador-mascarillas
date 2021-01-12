@@ -52,8 +52,8 @@ Mkfile.old
 dkms.conf
 
 #ignores adicionales
-*.c~
-*.h~
+*.c~*
+*.h~*
 .vscode/
 *.workspace
 *.pdsbak
