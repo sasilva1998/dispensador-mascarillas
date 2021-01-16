@@ -20,3 +20,5 @@ makePacket (uint8_t id, uint8_t inst, uint8_t * params, uint8_t length)
   uint8_t *tempPacket = packet;
   packet[4 + length] = defineChecksum (tempPacket);
 }
+
+comWrite

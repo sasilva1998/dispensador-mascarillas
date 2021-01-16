@@ -45,7 +45,7 @@ serial_begin ()
   UCSR0A = 0b00000000;
   UCSR0B = 0b10011000;		//habilitar interrupcion por recepcion / transmisión y recepción habilitados a 8 bits
   UCSR0C = 0b00000110;		//asíncrono, sin bit de paridad, 1 bit de parada a 8 bits
-  UBRR0 = 51;			//para una velocidad de 9600 baudios con un //oscilador de 8Mhz
+  UBRR0 = 103;			//para una velocidad de 9600 baudios con un //oscilador de 8Mhz
   sei ();
 }
 
