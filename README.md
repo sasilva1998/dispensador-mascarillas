@@ -18,3 +18,6 @@ length -> no es le
 The length of the Packet(Instruction, Parameter, Checksum fields). Length = number of Parameters + 2. Para nuestro caso, la instruccion y el checksum consumen un byte cada uno, por lo que el largo corresponde al numero de parametros que es máximo 2.
 
 https://emanual.robotis.com/docs/en/dxl/protocol1/
+
+tomo al atmega como id=1
+y al arduino como id=0

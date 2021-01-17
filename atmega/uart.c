@@ -1,5 +1,7 @@
 
 #include "uart.h"
+#include "comprotocol.h"
+#include "funciones.h"
 
 #define MAX_STR 50
 /******************************************************************************************************************************/
@@ -10,24 +12,28 @@ volatile unsigned char rx_buffer[MAX_STR] = { 0 };
 volatile unsigned char current_size = 0;
 bool isReady = false;
 
-ISR (USART_RX_vect)
-{
-  unsigned char ch = UDR0;
-  if (ch == '\r' || ch == '\n')
-    {
-      rx_buffer[current_size] = 0;
-      isReady = true;
-    }
-  else if (ch == '\b' && current_size > 0)
-    {
-      rx_buffer[--current_size] = 0;
-    }
-  else
-    {
-      rx_buffer[current_size++] = ch;
-    }
-}
+// ISR (USART_RX_vect)
+// {
+//   unsigned char ch = UDR0;
+//   if (ch == '\r' || ch == '\n')
+//     {
+//       rx_buffer[current_size] = 0;
+//       isReady = true;
+//     }
+//   else if (ch == '\b' && current_size > 0)
+//     {
+//       rx_buffer[--current_size] = 0;
+//     }
+//   else
+//     {
+//       rx_buffer[current_size++] = ch;
+//     }
+// }
 
+ISR (USART_RX_vect){
+  uint16_t * incInstructions = comRead();
+  actionHandler(incInstructions);
+}
 
 
 /******************************************************************************************************************************/
