@@ -15,7 +15,7 @@ class SerialCom:
         self.ser_atmega = Serial(atmega_port, baud_atmega, timeout=1)
         self.header = [0xFF, 0xFF]
 
-    def com(self, device_id, inst, params):
+    def com(self, device_id, inst, params=[]):
         packet = bytearray(self.make_packet(device_id, inst, params, len(params) + 2))
         if device_id == 0:
             self.ser_arduino.write(packet)

@@ -6,11 +6,13 @@ import paho.mqtt.client as mqtt
 
 from serial_control import SerialCom
 
+# adafruit credentials
 ADAFRUIT_IO_URL = "io.adafruit.com"
 ADAFRUIT_USERNAME = "sasilva"
 ADAFRUIT_IO_KEY = "aio_aerb53eCcM7DnWlG5JLp7Id44SEn"
 ADAFRUIT_IO_FEEDNAME = "proyecto-embebidos"
 
+# ubidots credentials
 UBIDOTS_TOKEN = "BBFF-5KMGC7fNayiBgauZ9TbbFtAXYkYmTt1"
 UBIDOTS_TOPIC = "/v1.6/devices/proyecto-embebidos"
 UBIDOTS_ENDPOINT = "mqtt://things.ubidots.com"
@@ -19,19 +21,20 @@ UBIDOTS_ENDPOINT = "mqtt://things.ubidots.com"
 class CloudControl:
     def message(self, client, feed_id, payload):
         print("Feed {0} received new value: {1}".format(feed_id, payload))
-        if payload == "retiro_mascarilla":
-            self.serial_com.com(1, 2, 500)
-            print("envio a micro para retiro mascarilla")
-        elif payload == "deposito_mascarilla":
-            self.serial_com.com(2, 2, 500)
-            print("envio a micro para deposito mascarilla")
+        if payload == 3:
+            self.serial_com.com(0, 3)
+            print("ingreso de mascarilla")
+
+        elif payload == 5:
+            self.serial_com.com(1, 5)
+            print("retiro de mascarilla")
 
     def adafruit_publish(self, data):
         self.adafruit_mqtt.publish(ADAFRUIT_IO_FEEDNAME, data)
 
     def __init__(self, mqtt_client_id="raspberry"):
 
-        self.serial_com = SerialCom()
+        self.serial_com = SerialCom(arduino_port="/dev/ttyS1", atmega_port="/dev/ttyS2")
         self.mqtt_client_id = mqtt_client_id
 
         # adafruit communication
@@ -47,12 +50,15 @@ class CloudControl:
         self.adafruit_mqtt.loop_background()
 
         # ubidots communication
-
         self.ubidots_mqtt = mqtt.Client(mqtt_client_id)
         self.ubidots_mqtt.connect(UBIDOTS_ENDPOINT)
 
     def serial_handler(self, action):
-        data = b'{"data": %s}' % action[0]
+
+        if action[0] == 0x06:
+            self.serial_com.com(1, 0x05, 0x01)
+        if action[0] == 0x02:
+            data = b'{"numMascarillas": %s}' % action[1]
         self.ubidots_mqtt.publish(UBIDOTS_ENDPOINT, data)
 
     def serial_listener(self):
