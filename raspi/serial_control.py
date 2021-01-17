@@ -36,11 +36,10 @@ class SerialCom:
                 id_length = uart.read(2)
                 device_id = list(id_length)[0]
                 length = list(id_length)[1]
-
-            data = list(uart.read(length))
-            packet += [device_id, length] + data
-            if check_checksum(data[-1], packet):
-                return packet
+                data = list(uart.read(length))
+                packet += [device_id, length] + data
+                if check_checksum(data[-1], packet):
+                    return packet
 
             print("Error in communication.")
             return False
