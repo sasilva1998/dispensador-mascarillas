@@ -8,7 +8,7 @@ from serial_control import SerialCom
 # adafruit credentials
 ADAFRUIT_IO_URL = "io.adafruit.com"
 ADAFRUIT_USERNAME = "sasilva"
-ADAFRUIT_IO_KEY = "aio_DFPY58KSCoVfKcVby9ywj2tuwQFL"
+ADAFRUIT_IO_KEY = "aio_FmzB567WayQFGBpBt14QwTxi6vAL"
 ADAFRUIT_IO_FEEDNAME = "proyecto-embebidos"
 
 # ubidots credentials
