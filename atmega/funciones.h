@@ -24,10 +24,10 @@ static volatile float array_numfloat[5] = { 0 };
 void arreglocreadoint (char *reci);
 void arreglocreadofloat (char *reci);
 void recibir_encender_led ();
-void encenderLedUV (bool status);
 
 float getfloat (int v);
 
 //funciones de movimiento y acciones
 void actionHandler(uint16_t * instruction);
+void accionarBanda(bool status);
 
