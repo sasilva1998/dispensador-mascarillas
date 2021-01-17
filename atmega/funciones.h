@@ -31,3 +31,7 @@ float getfloat (int v);
 void actionHandler(uint16_t * instruction);
 void accionarBanda(bool status);
 
+//numeracion de mascarilla
+void initNumMascarilla();
+void aumentoMascarilla(bool aumento);
+
