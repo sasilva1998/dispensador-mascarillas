@@ -2,8 +2,7 @@ import sys
 
 from Adafruit_IO import MQTTClient
 import paho.mqtt.client as mqtt
-
-
+import json
 from serial_control import SerialCom
 
 # adafruit credentials
@@ -14,9 +13,8 @@ ADAFRUIT_IO_FEEDNAME = "proyecto-embebidos"
 
 # ubidots credentials
 UBIDOTS_TOKEN = "BBFF-5KMGC7fNayiBgauZ9TbbFtAXYkYmTt1"
-UBIDOTS_TOPIC = "/v1.6/devices/proyecto-embebidos"
-UBIDOTS_ENDPOINT = "mqtt://things.ubidots.com"
-
+UBIDOTS_TOPIC = "/v1.6/devices/proyectoembebidos"
+UBIDOTS_ENDPOINT = "industrial.api.ubidots.com"
 
 class CloudControl:
     def message(self, client, feed_id, payload):
@@ -50,7 +48,8 @@ class CloudControl:
         self.adafruit_mqtt.loop_background()
 
         # ubidots communication
-        self.ubidots_mqtt = mqtt.Client(mqtt_client_id)
+        self.ubidots_mqtt = mqtt.Client(self.mqtt_client_id)
+        self.ubidots_mqtt.username_pw_set(UBIDOTS_TOKEN, password='')
         self.ubidots_mqtt.connect(UBIDOTS_ENDPOINT)
 
     def serial_handler(self, action):
@@ -58,8 +57,10 @@ class CloudControl:
         if action[0] == 0x06:
             self.serial_com.com(1, 0x05, 0x01)
         if action[0] == 0x02:
-            data = b'{"numMascarillas": %s}' % action[1]
-        self.ubidots_mqtt.publish(UBIDOTS_ENDPOINT, data)
+            data = {"numMascarillas": 1}
+            data["numMascarillas"]= action[1]
+            data = json.dumps(data)
+        self.ubidots_mqtt.publish(UBIDOTS_TOPIC, data)
 
     def serial_listener(self):
         while True:
