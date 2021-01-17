@@ -6,121 +6,130 @@ unsigned char eValues[2];
 unsigned char checksum;
 unsigned char packet[8];
 
+uint16_t checksumsum;
+
 unsigned char incPacket[5];
+
+uint16_t instructionPacket[2];
 
 uint8_t deviceId = 0x01;
 
-uint8_t incId;
-uint8_t incInst;
-unsigned char incParams[2];
-
-void
-makePacket (uint8_t id, uint8_t inst, uint8_t * params)
+void makePacket(uint8_t id, uint8_t inst, uint8_t *params)
 {
   packet[0] = 0xff;
   packet[1] = 0xff;
   packet[2] = id;
 
-  if (params[1] == 0xff)
-    {
-      packet[3] = 0x03;
-    }
+  if (params[1] != 0x00)
+  {
+    packet[3] = 0x03;
+  }
   else
-    {
-      packet[3] = 0x04;
-    }
+  {
+    packet[3] = 0x04;
+  }
   packet[4] = inst;
   int i;
-  for (i = 0; i < sizeof (params); i++)
-    {
-      packet[i + 5] = params[i];
-    }
-  defineChecksum (packet);
+  for (i = 0; i < sizeof(params); i++)
+  {
+    packet[i + 5] = params[i];
+  }
+  defineChecksum();
   packet[7] = checksum;
 }
 
-void
-comWrite (uint8_t id, uint8_t inst, uint8_t * params)
+void comWrite(uint8_t id, uint8_t inst, uint8_t *params)
 {
-  makePacket (id, inst, params);
+  makePacket(id, inst, params);
   int i;
-  for (i = 0; i < sizeof (packet); i++)
-    {
-      serial_print_char (packet[i]);
-    }
+  for (i = 0; i < sizeof(packet); i++)
+  {
+    serial_print_char(packet[i]);
+  }
 }
 
-void
-comRead ()
+uint16_t *
+comRead()
 {
+
   unsigned char incChecksum;
   unsigned char incByte;
-  unsigned char fbyte = serial_read_char ();
-  unsigned char sbyte = serial_read_char ();
+  unsigned char fbyte = serial_read_char();
+  unsigned char sbyte = serial_read_char();
   if (fbyte == 0xff && sbyte == 0xff)
+  {
+    incByte = serial_read_char();
+    incPacket[0] = incByte;
+    incByte = serial_read_char();
+    incPacket[1] = incByte;
+    incByte = serial_read_char();
+    incPacket[2] = incByte;
+    incByte = serial_read_char();
+    incPacket[3] = incByte;
+    incByte = serial_read_char();
+    incPacket[4] = incByte;
+    incByte = serial_read_char();
+    incChecksum = incByte;
+  }
+  if (checkChecksum(incChecksum, incPacket))
+  {
+    if (incPacket == deviceId)
     {
-      incByte = serial_read_char ();
-      incPacket[0] = incByte;
-      incByte = serial_read_char ();
-      incPacket[1] = incByte;
-      incByte = serial_read_char ();
-      incPacket[2] = incByte;
-      incByte = serial_read_char ();
-      incPacket[3] = incByte;
-      incByte = serial_read_char ();
-      incPacket[4] = incByte;
-      incByte = serial_read_char ();
-      incChecksum = incByte;
+      instructionPacket[0] = incPacket[0];
+      instructionPacket[1] = word(incPacket[3], incPacket[4]);
+      return instructionPacket;
     }
-  if (checkChecksum (incChecksum, incPacket))
+    else
     {
-      //TODO
+      instructionPacket[0] = 0;
+      instructionPacket[1] = 0;
+      return instructionPacket;
     }
-
+  }
 }
 
-void
-le (uint16_t h)
+unsigned char *
+le(uint16_t h)
 {
 
   eValues[0] = (h >> 8);
   eValues[1] = (h & 0xff);
+  return eValues;
 }
 
 uint16_t
-word (uint8_t l, uint8_t h)
+word(uint8_t l, uint8_t h)
 {
 
   uint16_t result = (h << 8) + l;
   return result;
 }
 
-void
-defineChecksum ()
+void defineChecksum()
 {
-  checksum = 0;
+  checksumsum = 0;
   int i;
-  for (i = 0; i < sizeof (packet); i++)
-    {
-      checksum += packet[i];
-    }
-  le (~(checksum));
+  for (i = 2; i < (sizeof(packet)-1); i++)
+  {
+    checksumsum += packet[i];
+  }
+  le(~(checksumsum));
   checksum = eValues[0];
 }
 
-bool
-checkChecksum (unsigned char value, unsigned char *checkPacket)
+bool checkChecksum(unsigned char value, unsigned char *checkPacket)
 {
   unsigned char checkChecksum = 0;
-  for (i = 0; i < sizeof (checkPacket); i++)
-    {
-      checkChecksum += packet[i];
-    }
-  le (~(checkChecksum));
+  int i;
+  for (i = 0; i < sizeof(checkPacket); i++)
+  {
+    checkChecksum += checkPacket[i];
+  }
+  le(~(checkChecksum));
   checkChecksum = eValues[0];
   if (checkChecksum == value)
-    {
-      return true;
-    }
+  {
+    return true;
+  }
   return false;
 }
