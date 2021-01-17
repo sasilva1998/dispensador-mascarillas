@@ -8,7 +8,7 @@ from serial_control import SerialCom
 # adafruit credentials
 ADAFRUIT_IO_URL = "io.adafruit.com"
 ADAFRUIT_USERNAME = "sasilva"
-ADAFRUIT_IO_KEY = "aio_aerb53eCcM7DnWlG5JLp7Id44SEn"
+ADAFRUIT_IO_KEY = "aio_DFPY58KSCoVfKcVby9ywj2tuwQFL"
 ADAFRUIT_IO_FEEDNAME = "proyecto-embebidos"
 
 # ubidots credentials
@@ -19,20 +19,21 @@ UBIDOTS_ENDPOINT = "industrial.api.ubidots.com"
 class CloudControl:
     def message(self, client, feed_id, payload):
         print("Feed {0} received new value: {1}".format(feed_id, payload))
-        if payload == 3:
-            self.serial_com.com(0, 3)
+        if payload == "3":
             print("ingreso de mascarilla")
+            self.serial_com.com(0, 3)
 
-        elif payload == 5:
-            self.serial_com.com(1, 5)
+        elif payload == "5":
             print("retiro de mascarilla")
+            self.serial_com.com(1, 5)
+            
 
     def adafruit_publish(self, data):
         self.adafruit_mqtt.publish(ADAFRUIT_IO_FEEDNAME, data)
 
     def __init__(self, mqtt_client_id="raspberry"):
 
-        self.serial_com = SerialCom(arduino_port="/dev/ttyS1", atmega_port="/dev/ttyS2")
+        self.serial_com = SerialCom(arduino_port="/dev/tnt1", atmega_port="/dev/tnt3")
         self.mqtt_client_id = mqtt_client_id
 
         # adafruit communication

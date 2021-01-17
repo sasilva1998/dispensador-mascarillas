@@ -58,3 +58,4 @@ dkms.conf
 *.workspace
 *.pdsbak
 *.pdsprj~*
+__pycache__
