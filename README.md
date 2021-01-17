@@ -21,3 +21,23 @@ https://emanual.robotis.com/docs/en/dxl/protocol1/
 
 tomo al atmega como id=1
 y al arduino como id=0
+
+## para reuniones
+
+https://meet.jit.si/proyectoembebidos
+
+
+## workflow
+
+arduino 1 entrada que es para ingresar mascarilla
+1 salida que es para aviso de finalizacion de proceso
+-> le avisa a la raspberry y la raspi avisa al atmega
+
+atmega
+1 entrada para abrir compuerta
+otra entrada de la banda transportadora
+
+1 salido el numero de mascarillas
+
+almacenar el numero de mascarillas en eeprom
+
