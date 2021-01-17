@@ -4,41 +4,29 @@
 
 unsigned char eValues[2];
 unsigned char checksum;
-unsigned char packet[8];
+unsigned char packet[7];
 
 uint16_t checksumsum;
 
-unsigned char incPacket[5];
+unsigned char incPacket[4];
 
 uint16_t instructionPacket[2];
 
 uint8_t deviceId = 0x01;
 
-void makePacket(uint8_t id, uint8_t inst, uint8_t *params)
+void makePacket(uint8_t id, uint8_t inst, uint8_t params)
 {
   packet[0] = 0xff;
   packet[1] = 0xff;
   packet[2] = id;
-
-  if (params[1] != 0x00)
-  {
-    packet[3] = 0x03;
-  }
-  else
-  {
-    packet[3] = 0x04;
-  }
+  packet[3] = 0x03;
   packet[4] = inst;
-  int i;
-  for (i = 0; i < sizeof(params); i++)
-  {
-    packet[i + 5] = params[i];
-  }
+  packet[5] = params;
   defineChecksum();
-  packet[7] = checksum;
+  packet[6] = checksum;
 }
 
-void comWrite(uint8_t id, uint8_t inst, uint8_t *params)
+void comWrite(uint8_t id, uint8_t inst, uint8_t params)
 {
   makePacket(id, inst, params);
   int i;
@@ -59,24 +47,22 @@ comRead()
   if (fbyte == 0xff && sbyte == 0xff)
   {
     incByte = serial_read_char();
-    incPacket[0] = incByte;
+    incPacket[0] = incByte; // id
     incByte = serial_read_char();
-    incPacket[1] = incByte;
+    incPacket[1] = incByte; // length
     incByte = serial_read_char();
-    incPacket[2] = incByte;
+    incPacket[2] = incByte; // instruction
     incByte = serial_read_char();
-    incPacket[3] = incByte;
-    incByte = serial_read_char();
-    incPacket[4] = incByte;
+    incPacket[3] = incByte; // parametro
     incByte = serial_read_char();
     incChecksum = incByte;
   }
   if (checkChecksum(incChecksum, incPacket))
   {
-    if (incPacket == deviceId)
+    if (incPacket[0] == deviceId)
     {
-      instructionPacket[0] = incPacket[0];
-      instructionPacket[1] = word(incPacket[3], incPacket[4]);
+      instructionPacket[0] = incPacket[1];
+      instructionPacket[1] = incPacket[3];
       return instructionPacket;
     }
     else
@@ -109,7 +95,7 @@ void defineChecksum()
 {
   checksumsum = 0;
   int i;
-  for (i = 2; i < (sizeof(packet)-1); i++)
+  for (i = 2; i < (sizeof(packet) - 1); i++)
   {
     checksumsum += packet[i];
   }

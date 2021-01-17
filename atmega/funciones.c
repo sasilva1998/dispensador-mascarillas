@@ -159,12 +159,12 @@ void aumentoMascarilla(bool aumento)
   {
     uint8_t numMaskPast = eeprom_read_byte(&numMascarillas);
     numMaskPast++;
-    comWrite(1, accionNumMascarillas, le(numMaskPast));
+    comWrite(1, accionNumMascarillas, numMaskPast);
   }
   else
   {
     uint8_t numMaskPast = eeprom_read_byte(&numMascarillas);
     numMaskPast--;
-    comWrite(1, accionNumMascarillas, le(numMaskPast));
+    comWrite(1, accionNumMascarillas, numMaskPast);
   }
 }

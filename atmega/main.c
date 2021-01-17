@@ -10,18 +10,18 @@
 #include "servos.h"
 #include "uart.h"
 #include "config.h"
+#include "funciones.h"
 
-
-int
-main (void)
+int main(void)
 {
 
-  initServos ();
-  serial_begin ();
+  initServos();
+  serial_begin();
   pin_init();
+  initNumMascarilla();
   while (1)
-    {
-    }
+  {
+  }
 
   return 0;
 }
