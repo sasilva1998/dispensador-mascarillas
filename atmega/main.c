@@ -11,18 +11,19 @@
 #include "uart.h"
 
 
-int main(void)
+int
+main (void)
 {
 
-    initServos();
-    serial_begin();
-    while (1)
+  initServos ();
+  serial_begin ();
+  while (1)
     {
-        posicionServos(1,90);
-        posicionServos(2,90);
-        _delay_ms(1000);
-        serial_print_char(0xff);
+      posicionServos (1, 90);
+      posicionServos (2, 90);
+      _delay_ms (1000);
+      serial_print_char (0xff);
     }
 
-    return 0;
+  return 0;
 }
