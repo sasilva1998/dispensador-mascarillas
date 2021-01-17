@@ -8,7 +8,7 @@ unsigned char accionGancho = 0x015;
 unsigned char accionCompuerta = 0x16;
 uint8_t accionNumMascarillas = 0x10;
 
-uint8_t numMascarillas=10;
+uint8_t numMascarillas=20;
 
 void recibir_encender_led()
 {
