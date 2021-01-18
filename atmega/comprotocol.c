@@ -1,6 +1,7 @@
 #include "comprotocol.h"
 
 #include "uart.h"
+#include "funciones.h"
 
 unsigned char eValues[2];
 unsigned char checksum;
@@ -10,9 +11,20 @@ uint16_t checksumsum;
 
 unsigned char incPacket[4];
 
-uint16_t instructionPacket[2];
+uint16_t instructionPacket[2] = {0x00, 0x00};
 
 uint8_t deviceId = 0x01;
+
+uint16_t incInstructions[2];
+
+ISR(USART_RX_vect)
+{
+  //incInstructions = comRead();
+  comRead();
+  incInstructions[0] = instructionPacket[0];
+  incInstructions[1] = incInstructions[1];
+  actionHandler(incInstructions);
+}
 
 void makePacket(uint8_t id, uint8_t inst, uint8_t params)
 {
@@ -39,8 +51,7 @@ void comWrite(uint8_t id, uint8_t inst, uint8_t params)
 uint16_t *
 comRead()
 {
-
-  unsigned char incChecksum;
+  unsigned char incChecksum = 0x00;
   unsigned char incByte;
   unsigned char fbyte = serial_read_char();
   unsigned char sbyte = serial_read_char();
@@ -72,6 +83,9 @@ comRead()
       return instructionPacket;
     }
   }
+  instructionPacket[0] = 0;
+  instructionPacket[1] = 0;
+  return instructionPacket;
 }
 
 unsigned char *

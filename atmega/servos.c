@@ -1,5 +1,5 @@
 #include "servos.h"
-
+#include <stdlib.h>
 void initServos()
 {
   // se usa 16 mhz

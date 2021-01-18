@@ -65,7 +65,6 @@ void recibirfloat()
     if (hj > 1.2)
     {
       PORTB = (1 << PB0);
-      ;
     }
 
     else

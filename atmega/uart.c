@@ -1,7 +1,5 @@
 
 #include "uart.h"
-#include "comprotocol.h"
-#include "funciones.h"
 
 #define MAX_STR 50
 /******************************************************************************************************************************/
@@ -29,12 +27,6 @@ bool isReady = false;
 //       rx_buffer[current_size++] = ch;
 //     }
 // }
-
-ISR(USART_RX_vect)
-{
-  uint16_t *incInstructions = comRead();
-  actionHandler(incInstructions);
-}
 
 /******************************************************************************************************************************/
 /*                                                               Funciones públicas de la libreria						*/
