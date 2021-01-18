@@ -21,11 +21,11 @@ class CloudControl:
         print("Feed {0} received new value: {1}".format(feed_id, payload))
         if payload == "3":
             print("ingreso de mascarilla")
-            self.serial_com.com(0, 3)
+            self.serial_com.com(1, 3)
 
         elif payload == "5":
             print("retiro de mascarilla")
-            self.serial_com.com(1, 5)
+            self.serial_com.com(0, 5)
             
 
     def adafruit_publish(self, data):
@@ -33,7 +33,7 @@ class CloudControl:
 
     def __init__(self, mqtt_client_id="raspberry"):
 
-        self.serial_com = SerialCom(arduino_port="/dev/tnt1", atmega_port="/dev/tnt3")
+        self.serial_com = SerialCom(arduino_port="/dev/ttyS1", atmega_port="/dev/ttyS2")
         self.mqtt_client_id = mqtt_client_id
 
         # adafruit communication
@@ -54,19 +54,20 @@ class CloudControl:
         self.ubidots_mqtt.connect(UBIDOTS_ENDPOINT)
 
     def serial_handler(self, action):
-
+        print("action")
+        print(action)
         if action[0] == 0x06:
             self.serial_com.com(1, 0x05, 0x01)
         if action[0] == 0x02:
             data = {"numMascarillas": 1}
             data["numMascarillas"]= action[1]
             data = json.dumps(data)
-        self.ubidots_mqtt.publish(UBIDOTS_TOPIC, data)
+            self.ubidots_mqtt.publish(UBIDOTS_TOPIC, data)
 
     def serial_listener(self):
         while True:
-            arduino_inc_action = self.serial_com.listen(0)
-            atmega_inc_action = self.serial_com.listen(1)
+            arduino_inc_action = self.serial_com.listen(1)
+            atmega_inc_action = self.serial_com.listen(0)
 
             if arduino_inc_action:
                 self.serial_handler(arduino_inc_action)

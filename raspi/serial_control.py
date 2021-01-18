@@ -17,9 +17,11 @@ class SerialCom:
 
     def com(self, device_id, inst, params=[]):
         packet = bytearray(self.make_packet(device_id, inst, params, len(params) + 2))
-        if device_id == 0:
+        if device_id == 1:
+            print("entragando")
             self.ser_arduino.write(packet)
         else:
+            print("recibiendo")
             self.ser_atmega.write(packet)
 
     def listen(self, device_id):
@@ -29,17 +31,19 @@ class SerialCom:
         else:
             uart = self.ser_atmega
 
-        packet = []
         if uart.in_waiting:
             temp = uart.read(2)
+            print(list(temp))
             if list(temp) == self.header:
                 id_length = uart.read(2)
                 device_id = list(id_length)[0]
                 length = list(id_length)[1]
-                data = list(uart.read(length))
-                packet += [device_id, length] + data
-                if check_checksum(data[-1], packet):
-                    return packet
+                data = [device_id, length]
+                data += list(uart.read(length))
+                print("trama raspi recibida")
+                print(data)
+                if check_checksum(data[-1], data):
+                    return data
 
             print("Error in communication.")
             return False
@@ -52,7 +56,7 @@ class SerialCom:
                 packet += [i]
             else:
                 packet += le(i)
-        packet += [define_checksum(packet[3:])]
+        packet += [define_checksum(packet[2:])]
         return packet
 
 
@@ -61,6 +65,7 @@ def check_checksum(value, packet):
     for i in packet[:-1]:
         checksum_val += i
     checksum_val = le(~checksum_val)[0]
+    print(checksum_val)
     if checksum_val == value:
         return True
     return False

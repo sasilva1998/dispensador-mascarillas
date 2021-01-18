@@ -22,6 +22,9 @@ https://emanual.robotis.com/docs/en/dxl/protocol1/
 tomo al atmega como id=1
 y al arduino como id=0
 
+### checksum
+Instruction Checksum = ~( ID + Length + Instruction + Parameter1 + … Parameter N )
+
 ## para reuniones
 
 https://meet.jit.si/proyectoembebidos
@@ -41,3 +44,8 @@ otra entrada de la banda transportadora
 
 almacenar el numero de mascarillas en eeprom
 
+ID 0 atmega
+ID 1 arduino
+
+trama ejemplo
+[255,255,1,2,5,248]
