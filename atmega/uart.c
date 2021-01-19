@@ -28,6 +28,13 @@ bool isReady = false;
 //     }
 // }
 
+ISR(USART_RX_vect)
+{
+  //incInstructions = comRead();
+  comRead(); //lectura y validación de paquete de entrada
+  actionHandler(); //envio de la entrada a ser manejada por funcion
+}
+
 /******************************************************************************************************************************/
 /*                                                               Funciones públicas de la libreria						*/
 /******************************************************************************************************************************/

@@ -110,11 +110,11 @@ servo id 1 -> gancho
 servo id 2 -> compuerta
 */
 
-void actionHandler(uint16_t *instruction)
+void actionHandler()
 {//maneja las acciones dependiendo de que envia la raspi
-  if (instruction[0] == accionCompuerta)
+  if (incInstruction[0] == accionCompuerta)
   {
-    if (instruction[1] == 1)
+    if (incInstruction[1] == 1)
     {
       aumentoMascarilla(false);
       posicionServos(90);
@@ -122,9 +122,9 @@ void actionHandler(uint16_t *instruction)
       posicionServos(0);
     }
   }
-  else if (instruction[0] == accionBanda)
+  else if (incInstruction[0] == accionBanda)
   {
-    if (instruction[1] == 1)
+    if (incInstruction[1] == 1)
     {
       aumentoMascarilla(true);
       accionarBanda(1);
@@ -158,12 +158,12 @@ void aumentoMascarilla(bool aumento)
   {
     uint8_t numMaskPast = eeprom_read_byte(&numMascarillas);
     numMaskPast++;
-    comWrite(1, accionNumMascarillas, numMaskPast);
+    comWrite(2, accionNumMascarillas, numMaskPast);
   }
   else
   {
     uint8_t numMaskPast = eeprom_read_byte(&numMascarillas);
     numMaskPast--;
-    comWrite(1, accionNumMascarillas, numMaskPast);
+    comWrite(2, accionNumMascarillas, numMaskPast);
   }
 }

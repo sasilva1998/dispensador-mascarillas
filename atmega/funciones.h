@@ -28,7 +28,7 @@ void recibir_encender_led ();
 float getfloat (int v);
 
 //funciones de movimiento y acciones
-void actionHandler(uint16_t * instruction);
+void actionHandler();
 void accionarBanda(bool status);
 
 //numeracion de mascarilla
