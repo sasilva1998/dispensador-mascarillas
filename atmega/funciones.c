@@ -112,9 +112,9 @@ servo id 2 -> compuerta
 
 void actionHandler()
 {//maneja las acciones dependiendo de que envia la raspi
-  if (incInstruction[0] == accionCompuerta)
+  if (instructionPacket[0] == accionCompuerta)
   {
-    if (incInstruction[1] == 1)
+    if (instructionPacket[1] == 1)
     {
       aumentoMascarilla(false);
       posicionServos(90);
@@ -122,9 +122,9 @@ void actionHandler()
       posicionServos(0);
     }
   }
-  else if (incInstruction[0] == accionBanda)
+  else if (instructionPacket[0] == accionBanda)
   {
-    if (incInstruction[1] == 1)
+    if (instructionPacket[1] == 1)
     {
       aumentoMascarilla(true);
       accionarBanda(1);
