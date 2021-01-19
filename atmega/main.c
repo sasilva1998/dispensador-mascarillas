@@ -14,10 +14,10 @@
 
 int main(void)
 {
-
-  initServos();
-  serial_begin();
   pin_init();
+  initServos();
+  posicionServos(0);
+  serial_begin();
   initNumMascarilla();
   while (1)
   {

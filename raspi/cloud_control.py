@@ -16,6 +16,7 @@ UBIDOTS_TOKEN = "BBFF-5KMGC7fNayiBgauZ9TbbFtAXYkYmTt1"
 UBIDOTS_TOPIC = "/v1.6/devices/proyectoembebidos"
 UBIDOTS_ENDPOINT = "industrial.api.ubidots.com"
 
+
 class CloudControl:
     def message(self, client, feed_id, payload):
         print("Feed {0} received new value: {1}".format(feed_id, payload))
@@ -25,15 +26,19 @@ class CloudControl:
 
         elif payload == "5":
             print("retiro de mascarilla")
-            self.serial_com.com(0, 5)
-            
+            self.serial_com.com(2, 5)
 
     def adafruit_publish(self, data):
         self.adafruit_mqtt.publish(ADAFRUIT_IO_FEEDNAME, data)
 
-    def __init__(self, mqtt_client_id="raspberry"):
+    def __init__(
+        self,
+        arduino_port="/dev/ttyS1",
+        atmega_port="/dev/ttyS2",
+        mqtt_client_id="raspberry",
+    ):
 
-        self.serial_com = SerialCom(arduino_port="/dev/ttyS1", atmega_port="/dev/ttyS2")
+        self.serial_com = SerialCom(arduino_port=arduino_port, atmega_port=atmega_port)
         self.mqtt_client_id = mqtt_client_id
 
         # adafruit communication
@@ -50,7 +55,7 @@ class CloudControl:
 
         # ubidots communication
         self.ubidots_mqtt = mqtt.Client(self.mqtt_client_id)
-        self.ubidots_mqtt.username_pw_set(UBIDOTS_TOKEN, password='')
+        self.ubidots_mqtt.username_pw_set(UBIDOTS_TOKEN, password="")
         self.ubidots_mqtt.connect(UBIDOTS_ENDPOINT)
 
     def serial_handler(self, action):
@@ -60,7 +65,7 @@ class CloudControl:
             self.serial_com.com(1, 0x05, 0x01)
         if action[0] == 0x02:
             data = {"numMascarillas": 1}
-            data["numMascarillas"]= action[1]
+            data["numMascarillas"] = action[1]
             data = json.dumps(data)
             self.ubidots_mqtt.publish(UBIDOTS_TOPIC, data)
 

@@ -1,9 +1,9 @@
-
 import threading
 from cloud_control import CloudControl
 
 
 def main():
+    # CloudControl(arduino_port="/dev/ttyS1", atmega_port="/dev/ttyS2")
     raspi_control = CloudControl()
     print("empezando")
     process_one = threading.Thread(target=raspi_control.serial_listener)

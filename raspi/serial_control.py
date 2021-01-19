@@ -26,7 +26,7 @@ class SerialCom:
 
     def listen(self, device_id):
 
-        if device_id == 0:
+        if device_id == 1:
             uart = self.ser_arduino
         else:
             uart = self.ser_atmega
