@@ -7,8 +7,6 @@
 #include <avr/interrupt.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include "comprotocol.h"
-#include "funciones.h"
 
 void serial_begin ();
 unsigned char serial_read_char ();

@@ -16,6 +16,12 @@ uint16_t instructionPacket[2] = {0x00, 0x00}; //paquete de instruccion (instrucc
 
 uint8_t deviceId = 0x02; //id para identificar el micro
 
+ISR(USART_RX_vect)
+{
+  comRead();                        //lectura y validación de paquete de entrada
+  actionHandler(instructionPacket); //envio de la entrada a ser manejada por funcion
+}
+
 void makePacket(uint8_t id, uint8_t inst, uint8_t params)
 {
   //generacion de paquete de salida

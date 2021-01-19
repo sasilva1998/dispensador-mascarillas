@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <util/delay.h>
+#include "comprotocol.h"
 
 char *recibido;
 int numero;
@@ -28,7 +29,7 @@ void recibir_encender_led ();
 float getfloat (int v);
 
 //funciones de movimiento y acciones
-void actionHandler();
+void actionHandler(uint16_t * instruction);
 void accionarBanda(bool status);
 
 //numeracion de mascarilla

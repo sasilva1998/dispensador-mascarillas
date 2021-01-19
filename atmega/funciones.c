@@ -110,11 +110,11 @@ servo id 1 -> gancho
 servo id 2 -> compuerta
 */
 
-void actionHandler()
+void actionHandler(uint16_t *instruction)
 {//maneja las acciones dependiendo de que envia la raspi
-  if (instructionPacket[0] == accionCompuerta)
+  if (instruction[0] == accionCompuerta)
   {
-    if (instructionPacket[1] == 1)
+    if (instruction[1] == 1)
     {
       aumentoMascarilla(false);
       posicionServos(90);
@@ -122,9 +122,9 @@ void actionHandler()
       posicionServos(0);
     }
   }
-  else if (instructionPacket[0] == accionBanda)
+  else if (instruction[0] == accionBanda)
   {
-    if (instructionPacket[1] == 1)
+    if (instruction[1] == 1)
     {
       aumentoMascarilla(true);
       accionarBanda(1);
