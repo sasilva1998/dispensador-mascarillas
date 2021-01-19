@@ -1,33 +1,35 @@
-#include "comprotocol.h"
 
+// librerias
+#include "comprotocol.h"
 #include "uart.h"
 #include "funciones.h"
 
-unsigned char eValues[2];
+unsigned char eValues[2]; //usado para guardar un int en dos bytes
 unsigned char checksum;
-unsigned char packet[7];
+unsigned char packet[7]; //necesitado para generar la traman
 
-uint16_t checksumsum;
+uint16_t checksumsum; //checkeo de checksum
 
-unsigned char incPacket[4];
+unsigned char incPacket[4]; //datos de paquete entrante
 
-uint16_t instructionPacket[2] = {0x00, 0x00};
+uint16_t instructionPacket[2] = {0x00, 0x00}; //paquete de instruccion (instruccion, param)
 
-uint8_t deviceId = 0x01;
+uint8_t deviceId = 0x02; //id para identificar el micro
 
-uint16_t incInstructions[2];
+uint16_t incInstructions[2]; // usado en main, se supone que es global (revisar si es global)
 
 ISR(USART_RX_vect)
 {
   //incInstructions = comRead();
-  comRead();
+  comRead(); //lectura y validación de paquete de entrada
   incInstructions[0] = instructionPacket[0];
-  incInstructions[1] = incInstructions[1];
-  actionHandler(incInstructions);
+  incInstructions[1] = instructionPacket[1];
+  actionHandler(incInstructions); //envio de la entrada a ser manejada por funcion
 }
 
 void makePacket(uint8_t id, uint8_t inst, uint8_t params)
 {
+  //generacion de paquete de salida
   packet[0] = 0xff;
   packet[1] = 0xff;
   packet[2] = id;
@@ -40,9 +42,9 @@ void makePacket(uint8_t id, uint8_t inst, uint8_t params)
 
 void comWrite(uint8_t id, uint8_t inst, uint8_t params)
 {
-  makePacket(id, inst, params);
+  makePacket(id, inst, params); //creacion de paquete
   int i;
-  for (i = 0; i < sizeof(packet); i++)
+  for (i = 0; i < sizeof(packet); i++) //envio de paquete
   {
     serial_print_char(packet[i]);
   }
@@ -53,7 +55,7 @@ comRead()
 {
   unsigned char incChecksum = 0x00;
   unsigned char incByte;
-  unsigned char fbyte = serial_read_char();
+  unsigned char fbyte = serial_read_char(); //obtencion de byte de entradas header
   unsigned char sbyte = serial_read_char();
   if (fbyte == 0xff && sbyte == 0xff)
   {
@@ -77,7 +79,7 @@ comRead()
       return instructionPacket;
     }
     else
-    {
+    { //regreso de paquete vacio
       instructionPacket[0] = 0;
       instructionPacket[1] = 0;
       return instructionPacket;
@@ -89,7 +91,7 @@ comRead()
 }
 
 unsigned char *
-le(uint16_t h)
+le(uint16_t h) //conversion a little endian dos bytes
 {
 
   eValues[0] = (h >> 8);
@@ -105,7 +107,7 @@ word(uint8_t l, uint8_t h)
   return result;
 }
 
-void defineChecksum()
+void defineChecksum() //creacion de checksum
 {
   checksumsum = 0;
   int i;
@@ -118,7 +120,7 @@ void defineChecksum()
 }
 
 bool checkChecksum(unsigned char value, unsigned char *checkPacket)
-{
+{ //validacion de checksum
   unsigned char checkChecksum = 0;
   int i;
   for (i = 0; i < sizeof(checkPacket); i++)

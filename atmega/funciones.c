@@ -111,7 +111,7 @@ servo id 2 -> compuerta
 */
 
 void actionHandler(uint16_t *instruction)
-{
+{//maneja las acciones dependiendo de que envia la raspi
   if (instruction[0] == accionCompuerta)
   {
     if (instruction[1] == 1)
@@ -147,12 +147,12 @@ void accionarBanda(bool status)
 }
 
 void initNumMascarilla()
-{
+{ //inicia el numero base de las mascarillas
   eeprom_write_byte(&numMascarillas, 10);
 }
 
 void aumentoMascarilla(bool aumento)
-{
+{//aumento o disminucion de mascarillas
 
   if (aumento)
   {

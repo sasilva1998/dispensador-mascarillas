@@ -17,7 +17,7 @@ void initServos()
 }
 
 void posicionServos(int pos)
-{
+{ //movimiento de los servos
   if (pos >= 0)
   {
     pos = (pos + 2) * 5.55;
