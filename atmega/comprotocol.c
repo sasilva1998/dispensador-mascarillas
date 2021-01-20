@@ -16,11 +16,14 @@ uint16_t instructionPacket[2] = {0x00, 0x00}; //paquete de instruccion (instrucc
 
 uint8_t deviceId = 0x02; //id para identificar el micro
 
-ISR(USART_RX_vect)
-{
+char buffer[10];
+
+ISR(USART_RX_vect){
   comRead();                        //lectura y validación de paquete de entrada
   actionHandler(instructionPacket); //envio de la entrada a ser manejada por funcion
+
 }
+
 
 void makePacket(uint8_t id, uint8_t inst, uint8_t params)
 {
@@ -45,6 +48,7 @@ void comWrite(uint8_t id, uint8_t inst, uint8_t params)
   }
 }
 
+
 uint16_t *
 comRead()
 {
@@ -52,37 +56,48 @@ comRead()
   unsigned char incByte;
   unsigned char fbyte = serial_read_char(); //obtencion de byte de entradas header
   unsigned char sbyte = serial_read_char();
-  if (fbyte == 0xff && sbyte == 0xff)
-  {
-    incByte = serial_read_char();
-    incPacket[0] = incByte; // id
-    incByte = serial_read_char();
-    incPacket[1] = incByte; // length
-    incByte = serial_read_char();
-    incPacket[2] = incByte; // instruction
-    incByte = serial_read_char();
-    incPacket[3] = incByte; // parametro
-    incByte = serial_read_char();
-    incChecksum = incByte;
-  }
-  if (checkChecksum(incChecksum, incPacket))
-  {
-    if (incPacket[0] == deviceId)
-    {
-      instructionPacket[0] = incPacket[1];
-      instructionPacket[1] = incPacket[3];
-      return instructionPacket;
-    }
-    else
-    { //regreso de paquete vacio
-      instructionPacket[0] = 0;
-      instructionPacket[1] = 0;
-      return instructionPacket;
-    }
-  }
-  instructionPacket[0] = 0;
-  instructionPacket[1] = 0;
+  serial_print_str("he leido cabecera");
+  itoa(fbyte, buffer, 16);
+  serial_println_str(buffer);
+  itoa(sbyte, buffer, 16);
+  serial_println_str(buffer);
+  _delay_ms(3000);
+
+  instructionPacket[0] = fbyte;
+  instructionPacket[1] = sbyte;
   return instructionPacket;
+
+  // if (fbyte == 0xff && sbyte == 0xff)
+  // {
+  //   incByte = serial_read_char();
+  //   incPacket[0] = incByte; // id
+  //   incByte = serial_read_char();
+  //   incPacket[1] = incByte; // length
+  //   incByte = serial_read_char();
+  //   incPacket[2] = incByte; // instruction
+  //   incByte = serial_read_char();
+  //   incPacket[3] = incByte; // parametro
+  //   incByte = serial_read_char();
+  //   incChecksum = incByte;
+  // }
+  // if (checkChecksum(incChecksum, incPacket))
+  // {
+  //   if (incPacket[0] == deviceId)
+  //   {
+  //     instructionPacket[0] = incPacket[1];
+  //     instructionPacket[1] = incPacket[3];
+  //     return instructionPacket;
+  //   }
+  //   else
+  //   { //regreso de paquete vacio
+  //     instructionPacket[0] = 0;
+  //     instructionPacket[1] = 0;
+  //     return instructionPacket;
+  //   }
+  // }
+  // instructionPacket[0] = 0;
+  // instructionPacket[1] = 0;
+  // return instructionPacket;
 }
 
 unsigned char *

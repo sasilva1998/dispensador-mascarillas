@@ -19,6 +19,7 @@ int main(void)
   posicionServos(0);
   serial_begin();
   initNumMascarilla();
+  serial_println_str("Encendido");
   while (1)
   {
   }

@@ -10,6 +10,7 @@ unsigned char accionCompuerta = 0x05;
 uint8_t accionNumMascarillas = 0x02;
 
 uint8_t numMascarillas EEMEM = 20;
+char buffer[10];
 
 void recibir_encender_led()
 {
@@ -111,16 +112,22 @@ servo id 2 -> compuerta
 */
 
 void actionHandler(uint16_t *instruction)
-{//maneja las acciones dependiendo de que envia la raspi
-  if (instruction[0] == accionCompuerta)
+{ //maneja las acciones dependiendo de que envia la raspi
+  serial_println_str("Ejecutando action handler");
+  itoa(instruction[0], buffer, 16);
+  serial_println_str(buffer);
+  itoa(instruction[1], buffer, 16);
+  serial_println_str(buffer);
+
+  if (instruction[0] == 5)
   {
-    if (instruction[1] == 1)
-    {
-      aumentoMascarilla(false);
-      posicionServos(90);
-      _delay_ms(3000);
-      posicionServos(0);
-    }
+    cli();
+    serial_println_str("abriendo compuerta");
+    aumentoMascarilla(false);
+    posicionServos(90);
+    _delay_ms(100000);
+    posicionServos(0);
+    sei();
   }
   else if (instruction[0] == accionBanda)
   {
@@ -152,18 +159,21 @@ void initNumMascarilla()
 }
 
 void aumentoMascarilla(bool aumento)
-{//aumento o disminucion de mascarillas
+{ //aumento o disminucion de mascarillas
 
   if (aumento)
   {
     uint8_t numMaskPast = eeprom_read_byte(&numMascarillas);
     numMaskPast++;
+    eeprom_write_byte(&numMascarillas, numMaskPast);
     comWrite(2, accionNumMascarillas, numMaskPast);
   }
   else
   {
     uint8_t numMaskPast = eeprom_read_byte(&numMascarillas);
     numMaskPast--;
+    eeprom_write_byte(&numMascarillas, numMaskPast);
     comWrite(2, accionNumMascarillas, numMaskPast);
   }
 }
+
