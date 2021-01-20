@@ -18,10 +18,12 @@ class SerialCom:
     def com(self, device_id, inst, params=[]):
         packet = bytearray(self.make_packet(device_id, inst, params, len(params) + 2))
         if device_id == 1:
-            print("entragando")
+            print("entregando")
             self.ser_arduino.write(packet)
         else:
             print("recibiendo")
+            packet = bytearray([255, 255, 2, 3, 5, 1, 248])
+            print(packet)
             self.ser_atmega.write(packet)
 
     def listen(self, device_id):
@@ -50,12 +52,12 @@ class SerialCom:
         return False
 
     def make_packet(self, device_id, inst, params, length):
-        packet = self.header + [device_id, length, inst]
-        for i in params:
-            if i > 255:
-                packet += [i]
-            else:
-                packet += le(i)
+        packet = self.header + [device_id, length, inst, params]
+        # for i in params:
+        #     if i > 255:
+        #         packet += [i]
+        #     else:
+        #         packet += le(i)
         packet += [define_checksum(packet[2:])]
         return packet
 
