@@ -3,9 +3,8 @@
 void makePacket(uint8_t id, uint8_t inst, uint8_t params);
 
 void comWrite(uint8_t id, uint8_t inst, uint8_t params);
-uint16_t *comRead();
 
-bool checkChecksum(uint8_t value, unsigned char *checkPacket);
+bool checkChecksum(unsigned char value, unsigned char *checkPacket);
 void defineChecksum();
 
 unsigned char *le(uint16_t h);

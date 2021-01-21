@@ -20,8 +20,22 @@ int main(void)
   serial_begin();
   initNumMascarilla();
   serial_println_str("Encendido");
+  unsigned char fbyte = 0;
+  unsigned char sbyte = 0;
+  uint16_t incomingPacket[2];
+  char buffer[10];
   while (1)
   {
+
+    fbyte = serial_read_char();
+    sbyte = serial_read_char();
+
+    if (fbyte != 0 && sbyte != 0)
+    {
+      incomingPacket[0] = fbyte;
+      incomingPacket[1] = sbyte;
+      actionHandler(incomingPacket);
+    }
   }
 
   return 0;

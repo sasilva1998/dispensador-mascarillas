@@ -10,24 +10,6 @@ volatile unsigned char rx_buffer[MAX_STR] = {0};
 volatile unsigned char current_size = 0;
 bool isReady = false;
 
-// ISR (USART_RX_vect)
-// {
-//   unsigned char ch = UDR0;
-//   if (ch == '\r' || ch == '\n')
-//     {
-//       rx_buffer[current_size] = 0;
-//       isReady = true;
-//     }
-//   else if (ch == '\b' && current_size > 0)
-//     {
-//       rx_buffer[--current_size] = 0;
-//     }
-//   else
-//     {
-//       rx_buffer[current_size++] = ch;
-//     }
-// }
-
 /******************************************************************************************************************************/
 /*                                                               Funciones públicas de la libreria						*/
 /******************************************************************************************************************************/
@@ -40,7 +22,7 @@ void serial_begin()
 {
   cli();
   UCSR0A = 0b00000000;
-  UCSR0B = 0b10011000; //habilitar interrupcion por recepcion / transmisión y recepción habilitados a 8 bits
+  UCSR0B = 0b00011000; //habilitar interrupcion por recepcion / transmisión y recepción habilitados a 8 bits
   UCSR0C = 0b00000110; //asíncrono, sin bit de paridad, 1 bit de parada a 8 bits
   UBRR0 = 103;         //para una velocidad de 9600 baudios con un //oscilador de 8Mhz
   sei();
