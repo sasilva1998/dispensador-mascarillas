@@ -22,8 +22,8 @@ class SerialCom:
             self.ser_arduino.write(packet)
         else:
             print("recibiendo")
-            packet = bytearray([255, 255, 2, 3, 5, 1, 248])
-            print(packet)
+            packet[0] = device_id
+            packet[1] = inst
             self.ser_atmega.write(packet)
 
     def listen(self, device_id):
@@ -35,7 +35,7 @@ class SerialCom:
 
         if uart.in_waiting:
             temp = uart.read(2)
-            print(list(temp))
+            # print(list(temp))
             if list(temp) == self.header:
                 id_length = uart.read(2)
                 device_id = list(id_length)[0]
@@ -43,16 +43,20 @@ class SerialCom:
                 data = [device_id, length]
                 data += list(uart.read(length))
                 print("trama raspi recibida")
-                print(data)
+                # print(data)
+                if device_id == 2:
+                    return data
                 if check_checksum(data[-1], data):
                     return data
 
-            print("Error in communication.")
+            # print("Error in communication.")
             return False
         return False
 
     def make_packet(self, device_id, inst, params, length):
-        packet = self.header + [device_id, length, inst, params]
+        packet = self.header + [device_id, length, inst]
+        if len(params):
+            packet += params
         # for i in params:
         #     if i > 255:
         #         packet += [i]
@@ -65,9 +69,10 @@ class SerialCom:
 def check_checksum(value, packet):
     checksum_val = 0
     for i in packet[:-1]:
+        # print(i)
         checksum_val += i
     checksum_val = le(~checksum_val)[0]
-    print(checksum_val)
+    # print(checksum_val)
     if checksum_val == value:
         return True
     return False
