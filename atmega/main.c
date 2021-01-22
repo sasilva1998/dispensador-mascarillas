@@ -29,6 +29,12 @@ int main(void)
 
     fbyte = serial_read_char();
     sbyte = serial_read_char();
+    _delay_ms(300);
+
+    // itoa(fbyte, buffer, 16);
+    // serial_println_str(buffer);
+    // itoa(sbyte, buffer, 16);
+    // serial_println_str(buffer);
 
     if (fbyte != 0 && sbyte != 0)
     {

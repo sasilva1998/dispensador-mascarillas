@@ -4,6 +4,7 @@ from Adafruit_IO import MQTTClient
 import paho.mqtt.client as mqtt
 import json
 from serial_control import SerialCom
+from time import sleep
 
 # adafruit credentials
 ADAFRUIT_IO_URL = "io.adafruit.com"
@@ -21,10 +22,12 @@ class CloudControl:
     def message(self, client, feed_id, payload):
         print("Feed {0} received new value: {1}".format(feed_id, payload))
         if payload == "3":
+            print("-" * 15)
             print("ingreso de mascarilla")
             self.serial_com.com(1, 3)
 
         elif payload == "5":
+            print("-" * 15)
             print("retiro de mascarilla")
             self.serial_com.com(2, 5, [1])
 
@@ -46,6 +49,9 @@ class CloudControl:
         self.adafruit_mqtt.on_message = self.message
         self.adafruit_mqtt.on_connect = connected
 
+        self.data = {"numMascarillas": 1}
+        self.data_json = json.dumps(self.data)
+
         try:
             self.adafruit_mqtt.connect()
         except Exception as e:
@@ -61,20 +67,21 @@ class CloudControl:
     def serial_handler(self, action):
         print("##############action###############")
         print(action)
-        if action[0] == 0x06:
+        if action[2] == 0x06:
             print("accion banda")
             self.serial_com.com(2, 0x04, [1])
-        if action[0] == 0x02:
-            print("enviando datos a ubidots")
-            data = {"numMascarillas": 1}
-            data["numMascarillas"] = action[3]
-            data = json.dumps(data)
-            self.ubidots_mqtt.publish(UBIDOTS_TOPIC, data)
-        if action[0] == 0x07:
-            print("enviando mascarillas igual a 0 a ubidots")
-            data = {"numMascarillas": 0}
-            data = json.dumps(data)
-            self.ubidots_mqtt.publish(UBIDOTS_TOPIC, data)
+        if action[2] == 0x02:
+            print("enviando numero de mascarillas a ubidots")
+            self.data["numMascarillas"] = action[3]
+            self.data_json = json.dumps(self.data)
+            # self.ubidots_mqtt.publish(UBIDOTS_TOPIC, data)
+            sleep(1)
+        if action[2] == 0x07:
+            print("comunicando a ubidots mascarillas agotadas")
+            self.data["numMascarillas"] = 0
+            self.data_json = json.dumps(self.data)
+            # self.ubidots_mqtt.publish(UBIDOTS_TOPIC, data)
+            sleep(1)
 
     def serial_listener(self):
         while True:
@@ -85,6 +92,11 @@ class CloudControl:
                 self.serial_handler(arduino_inc_action)
             if atmega_inc_action:
                 self.serial_handler(atmega_inc_action)
+
+    def mqtt_publisher(self):
+        while True:
+            self.ubidots_mqtt.publish(UBIDOTS_TOPIC, self.data_json)
+            sleep(1)
 
 
 def connected(client):

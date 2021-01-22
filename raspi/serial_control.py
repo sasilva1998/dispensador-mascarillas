@@ -18,10 +18,12 @@ class SerialCom:
     def com(self, device_id, inst, params=[]):
         packet = bytearray(self.make_packet(device_id, inst, params, len(params) + 2))
         if device_id == 1:
-            print("entregando")
+            print("*" * 15)
+            print("comunicandose con el arduino")
             self.ser_arduino.write(packet)
         else:
-            print("recibiendo")
+            print("*" * 15)
+            print("comunicacion de accion atmega")
             packet[0] = device_id
             packet[1] = inst
             self.ser_atmega.write(packet)
@@ -42,7 +44,7 @@ class SerialCom:
                 length = list(id_length)[1]
                 data = [device_id, length]
                 data += list(uart.read(length))
-                print("trama raspi recibida")
+                print("recibiendo datos de los end device")
                 # print(data)
                 if device_id == 2:
                     return data

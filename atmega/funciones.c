@@ -58,10 +58,10 @@ void accionarBanda(bool status)
 void initNumMascarilla()
 { //inicia el numero base de las mascarillas
   uint8_t statusMaskInit = eeprom_read_byte(&initMask);
-  if (statusMaskInit == 0)
+  if (statusMaskInit == 255)
   {
     eeprom_write_byte(&numMascarillas, 10);
-    eeprom_write_byte(&initMask, 1);
+    eeprom_write_byte(&initMask, 0);
   }
 }
 
@@ -70,6 +70,7 @@ void aumentoMascarilla(bool aumento)
 
   if (aumento) //se aumenta una mascarilla y se notifica a raspi
   {
+
     uint8_t numMaskPast = eeprom_read_byte(&numMascarillas);
     numMaskPast++;
     eeprom_write_byte(&numMascarillas, numMaskPast);
@@ -80,11 +81,13 @@ void aumentoMascarilla(bool aumento)
     uint8_t numMaskPast = eeprom_read_byte(&numMascarillas);
     if (numMaskPast == 1) //si solo queda una no disminuye y avisa el agotado de mascarillas
     {
+
       serial_println_str("Se acabaron las mascarillas");
       comWrite(2, accionNumMascarillasAgotadas, 0);
     }
     else
     {
+
       numMaskPast--;
       eeprom_write_byte(&numMascarillas, numMaskPast);
       comWrite(2, accionNumMascarillas, numMaskPast);
