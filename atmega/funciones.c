@@ -81,9 +81,8 @@ void aumentoMascarilla(bool aumento)
     uint8_t numMaskPast = eeprom_read_byte(&numMascarillas);
     if (numMaskPast == 1) //si solo queda una no disminuye y avisa el agotado de mascarillas
     {
-
-      serial_println_str("Se acabaron las mascarillas");
-      comWrite(2, accionNumMascarillasAgotadas, 0);
+      //serial_println_str("Se acabaron las mascarillas");
+      comWrite(2, accionNumMascarillasAgotadas, 1);
     }
     else
     {
