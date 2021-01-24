@@ -1,6 +1,29 @@
-# Documentacion para futuro debuging
+# Dispensador y desinfectador de mascarillas
 
-## servo control
+## Setup
+En este repo encontrara todo lo relacionado a lo que se hizo para el proyecto mencionado, que fue simulado por el problema de covid.
+
+Para ello considerar que en los distintos directorios se encuentra lo siguiente:
+
+* `atmega`: puede en este directorio encontrar todos los códigos que se hicieron en C para la simulación del microcontrolador atmega328p y también se encuentra el archivo de proteus usado para la simulación así como el archivo `.hex` que corresponde al compilado del código a usar.
+* `arduino`: se encuentra la simulación de proteus y dentro de esta el código usado para la misma.
+* `raspi`: en esta carpeta se encuentran todos los códigos y algunas pruebas sobre la comunicación por mqtt.
+* `diseño3d`: se puede encontrar el diseño 3D que se planeaba usar para el dispensador.
+
+Adicionalmente se adjunta aqui el documento en overleaf https://www.overleaf.com/read/pnkwkxpyvcqj
+
+Y también se agrega el video de youtube donde se explica también el proyecto.
+
+https://www.youtube.com/watch?v=SHhLXYO--00&feature=youtu.be
+
+Cabe admeás recalcar que se usa google assistant y los servicios de IFTTT Adafruit IO y Ubidots.
+
+
+## Documentacion para futuro debuging
+
+
+
+### servo control
 para positivo
 
 2189 -> 0 en servo positivo
@@ -11,7 +34,7 @@ para negativo
 3799 -> 0
 2800 -> 180
 
-## comunicacion
+### comunicacion
 
 length -> no es le
 
@@ -22,15 +45,15 @@ https://emanual.robotis.com/docs/en/dxl/protocol1/
 tomo al atmega como id=1
 y al arduino como id=0
 
-### checksum
+#### checksum
 Instruction Checksum = ~( ID + Length + Instruction + Parameter1 + … Parameter N )
 
-## para reuniones
+### para reuniones
 
 https://meet.jit.si/proyectoembebidos
 
 
-## workflow
+### workflow
 
 arduino 1 entrada que es para ingresar mascarilla
 1 salida que es para aviso de finalizacion de proceso
